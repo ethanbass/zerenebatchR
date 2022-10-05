@@ -3,7 +3,7 @@ globalVariables(c("."))
 #' create and run batchscript in zerene stacker
 #' @import xml2
 #' @import magrittr
-#' @importFrom fs dir_delete
+#' @importFrom fs dir_delete path_home
 #' @param files data.frame containing at least 2 columns containing the paths of
 #' the files to parse and a grouping factor.
 #' @param c_path String or numerical index specifying column where paths can be found.
@@ -49,10 +49,10 @@ run_zs_batch <- function(files, c_path = 1, c_split = 2,
   # program_path <- configure_zerene_stacker()
 
   launch_cmd_path <- switch(system,
-                            "unix" = "~/Library/Preferences/ZereneStacker/zerenstk.launchcmd")
-  # "unix" = paste0(gsub("MacOS/openchrom", "", path_parser), "Eclipse/openchrom.ini"),
-  # "linux" = paste0(path_parser, ".uni"),
-  # "windows" = paste0(gsub(".exe", "", path_parser), ".ini"))
+                            "unix" = path_home("Library/Preferences/ZereneStacker/zerenstk.launchcmd"),
+                            "windows" = path_home("AppData\\ZereneStacker\\zerenstk.launchcmd"),
+                            "linux" = "~/.ZereneStacker/zerenstk.launchcmd"
+                            )
 
   launch_cmd <- readLines(launch_cmd_path)
 
