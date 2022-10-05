@@ -58,8 +58,7 @@ run_zs_batch <- function(files, c_path = 1, c_split = 2,
 
   # compile xml batch file
 
-  path_template <- "/Users/ethanbass/R_packages/zerenebatchr/inst/ZereneBatch.xml"
-  # path_template <- system.file("ZereneBatch.xml", package = "zerenebatchr")
+  path_template <- system.file("ZereneBatch.xml", package = "zerenebatchR")
   x <- xml2::read_xml(x = path_template)
 
   ### add files to source ###
