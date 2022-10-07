@@ -33,6 +33,7 @@ run_zs_batch <- function(files, c_path = 1, c_split = 2,
   if (nrow(files) == 0){
     stop("Files not found.")
   }
+
   stacker <- match.arg(stacker, c("pmax", "dmap"))
   if (missing(path_out)){
     temp <- TRUE
@@ -42,22 +43,21 @@ run_zs_batch <- function(files, c_path = 1, c_split = 2,
   #   stop("'path_out' not found. Make sure directory exists.")
   # }
 
-  system <- .Platform$OS.type
-
-  # stack files in temporary folders
-
-  stacks <- stack_files(files, c_path, c_split, temp=temp)
-
   # get launch command
-  # program_path <- configure_zerene_stacker()
+
+    system <- .Platform$OS.type
 
   launch_cmd_path <- switch(system,
                             "unix" = path_home("Library/Preferences/ZereneStacker/zerenstk.launchcmd"),
                             "windows" = path_home("AppData\\ZereneStacker\\zerenstk.launchcmd"),
                             "linux" = "~/.ZereneStacker/zerenstk.launchcmd"
-                            )
+  )
 
   launch_cmd <- readLines(launch_cmd_path)
+
+  # stack files in temporary folders
+
+  stacks <- stack_files(files, c_path, c_split, temp=temp)
 
   # compile xml batch file
   if (is.null(path_template)){
@@ -80,18 +80,17 @@ run_zs_batch <- function(files, c_path = 1, c_split = 2,
   # x %>% xml_children()  %>% .[[2]] %>% xml_find_all("//Sources")
 
   # set path out
-  # <OutputImagesDesignatedFolder value="/Users/ethanbass/Pictures/mycorrhizal_competition_pics/2022_10_01/stacked" />
 
   x %>% xml_children()  %>% .[[2]] %>% xml_find_all("//OutputImagesDesignatedFolder") %>%
     xml_replace(paste0('OutputImagesDesignatedFolder value="', path_out, '"'))
   # x %>% xml_children %>% .[[4]] %>% xml_add_child(.value=gsub("path_out", path_out, parser))
 
   # set stacking algorithm
-  # <Slabbing.StackingOperation value="PMax" />
 
   stacker <- switch(stacker,
                     "pmax" = "PMax",
                     "dmap" = "DMap")
+
   x %>% xml_children()  %>% .[[2]] %>% xml_find_all("//Slabbing.StackingOperation") %>%
     xml_replace(paste0('Slabbing.StackingOperation value="', stacker, '"'))
 
@@ -99,6 +98,7 @@ run_zs_batch <- function(files, c_path = 1, c_split = 2,
   if (is.null(path_xml)){
     path_xml <- paste0(path_out, "batchfile_", strftime(Sys.time(),format = "%Y-%m-%d_%H-%M-%S"), ".xml")
   }
+
   write_xml(x, file = path_xml)
 
   # run batch file
