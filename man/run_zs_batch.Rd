@@ -10,7 +10,9 @@ run_zs_batch(
   c_split = 2,
   path_out,
   stacker = c("pmax", "dmap"),
-  temp = TRUE
+  temp = TRUE,
+  path_template = NULL,
+  path_xml = NULL
 )
 }
 \arguments{
@@ -30,6 +32,11 @@ be found for grouping images}
 directory which will be deleted when the operation is completed. Thus,
 the organization of the original image files will be maintained. Otherwise,
 images will be moved into folders by stack.}
+
+\item{path_template}{Path to custom template to be customized according to
+the provided arguments (optional).}
+
+\item{path_xml}{path to write xml file (optional).}
 }
 \value{
 If \code{return_paths} is TRUE, the function will return a vector of paths to the newly created files.

@@ -15,6 +15,9 @@ globalVariables(c("."))
 #' directory which will be deleted when the operation is completed. Thus,
 #' the organization of the original image files will be maintained. Otherwise,
 #' images will be moved into folders by stack.
+#' @param path_template Path to custom template to be customized according to
+#' the provided arguments (optional).
+#' @param path_xml path to write xml file (optional).
 #' @return If \code{return_paths} is TRUE, the function will return a vector of paths to the newly created files.
 #' If \code{return_paths} is FALSE and \code{export_format} is \code{csv}, the function will return a list
 #' of chromatograms in \code{data.frame} format. Otherwise, it will not return anything.
@@ -23,10 +26,10 @@ globalVariables(c("."))
 #' @author Ethan Bass
 #' @export
 
-
 run_zs_batch <- function(files, c_path = 1, c_split = 2,
                                path_out, stacker = c("pmax", "dmap"),
-                               temp = TRUE){
+                               temp = TRUE, path_template = NULL,
+                               path_xml = NULL){
   if (nrow(files) == 0){
     stop("Files not found.")
   }
@@ -57,8 +60,9 @@ run_zs_batch <- function(files, c_path = 1, c_split = 2,
   launch_cmd <- readLines(launch_cmd_path)
 
   # compile xml batch file
-
-  path_template <- system.file("ZereneBatch.xml", package = "zerenebatchR")
+  if (is.null(path_template)){
+    path_template <- system.file("ZereneBatch.xml", package = "zerenebatchR")
+  }
   x <- xml2::read_xml(x = path_template)
 
   ### add files to source ###
@@ -92,8 +96,9 @@ run_zs_batch <- function(files, c_path = 1, c_split = 2,
     xml_replace(paste0('Slabbing.StackingOperation value="', stacker, '"'))
 
   # write batch file
-
-  path_xml <- paste0(path_out, "batchfile_", strftime(Sys.time(),format = "%Y-%m-%d_%H-%M-%S"), ".xml")
+  if (is.null(path_xml)){
+    path_xml <- paste0(path_out, "batchfile_", strftime(Sys.time(),format = "%Y-%m-%d_%H-%M-%S"), ".xml")
+  }
   write_xml(x, file = path_xml)
 
   # run batch file
@@ -122,6 +127,7 @@ run_zs_batch <- function(files, c_path = 1, c_split = 2,
 #' the organization of the original image files will be maintained. Otherwise,
 #' images will be moved into folders by stack.
 #' @author Ethan Bass
+
 stack_files <- function(files, c_path, c_split, temp = TRUE){
   sep <- "/"
   df <- split(as.data.frame(files), files[,c_split])
