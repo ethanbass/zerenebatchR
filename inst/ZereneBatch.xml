@@ -4,8 +4,7 @@
   <BatchQueue>
     <Batches length="1">
       <Batch>
-        <Sources length="1">
-          <Source value="/Users/ethanbass/Pictures/mycorrhizal_competition_pics/2022_10_01/stack1" />
+        <Sources length="0">
         </Sources>
         <ProjectDispositionCode value="101" />
         <Tasks length="1">

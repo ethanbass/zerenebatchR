@@ -28,24 +28,32 @@ globalVariables(c("."))
 
 run_zs_batch <- function(files, c_path = 1, c_split = 2,
                                path_out, stacker = c("pmax", "dmap"),
-                               temp = TRUE, path_template = NULL,
-                               path_xml = NULL){
-  if (nrow(files) == 0){
-    stop("Files not found.")
+                               temp, path_template = NULL,
+                               path_xml = NULL, stack = TRUE){
+  if (stack){
+    if (!inherits(files, "data.frame")){
+      stop("If `stack == TRUE`, please supply a `data.frame` to the `files` argument.")
+    }
+    if (nrow(files) == 0){
+      stop("Files not found.")
+    }
+  } else{
+    if (!inherits(files, "character")){
+      stop("If `stack == FALSE`, please supply a character vector to the `files` argument containing the paths to stacked images.")
+    }
+  }
+
+  if (missing(temp)){
+    if (missing(path_out)){
+      temp <- TRUE
+    } else{ temp <- FALSE}
   }
 
   stacker <- match.arg(stacker, c("pmax", "dmap"))
-  if (missing(path_out)){
-    temp <- TRUE
-  }
-
-  # if(!file.exists(path_out)){
-  #   stop("'path_out' not found. Make sure directory exists.")
-  # }
 
   # get launch command
 
-    system <- .Platform$OS.type
+  system <- .Platform$OS.type
 
   launch_cmd_path <- switch(system,
                             "unix" = path_home("Library/Preferences/ZereneStacker/zerenstk.launchcmd"),
@@ -56,13 +64,17 @@ run_zs_batch <- function(files, c_path = 1, c_split = 2,
   launch_cmd <- readLines(launch_cmd_path)
 
   # stack files in temporary folders
-
-  stacks <- stack_files(files, c_path, c_split, temp=temp)
+  if (stack){
+    stacks <- stack_files(files, c_path, c_split, temp = temp)
+  } else{
+    stacks <- files
+  }
 
   # compile xml batch file
   if (is.null(path_template)){
     path_template <- system.file("ZereneBatch.xml", package = "zerenebatchR")
   }
+
   x <- xml2::read_xml(x = path_template)
 
   ### add files to source ###
@@ -95,6 +107,7 @@ run_zs_batch <- function(files, c_path = 1, c_split = 2,
     xml_replace(paste0('Slabbing.StackingOperation value="', stacker, '"'))
 
   # write batch file
+
   if (is.null(path_xml)){
     path_xml <- paste0(path_out, "batchfile_", strftime(Sys.time(),format = "%Y-%m-%d_%H-%M-%S"), ".xml")
   }
@@ -128,18 +141,18 @@ run_zs_batch <- function(files, c_path = 1, c_split = 2,
 #' images will be moved into folders by stack.
 #' @author Ethan Bass
 
-stack_files <- function(files, c_path, c_split, temp = TRUE){
+stack_files <- function(df, c_path, c_split, temp = TRUE){
   sep <- "/"
-  df <- split(as.data.frame(files), files[,c_split])
+  df <- split(as.data.frame(df), df[,c_split])
+  file_action <- switch(as.character(temp),
+                        "TRUE" = file_copy,
+                        "FALSE" = file_move)
   sapply(df, function(x){
     path <- x[1, c_path]
     dirn <- dirname(path)
     dirn <- ifelse(temp, paste0(dirn, "/temp/"), dirn)
-    dir_path <- paste(dirn, x[,c_split][1], sep=sep)
+    dir_path <- paste(dirn, x[,c_split][1], sep = sep)
     dir_create(dir_path)
-    file_action <- switch(temp,
-                          "TRUE" = file_copy,
-                          "FALSE" = file_move)
     sapply(x[,c_path], function(file){
       file_action(file, dir_path)
     })
