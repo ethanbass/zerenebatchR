@@ -4,10 +4,10 @@
 \alias{stack_files}
 \title{stack files in folders}
 \usage{
-stack_files(files, c_path, c_split, temp = TRUE)
+stack_files(df, c_path, c_split, temp = TRUE)
 }
 \arguments{
-\item{files}{data.frame containing at least 2 columns containing the paths of
+\item{df}{data.frame containing at least 2 columns containing the paths of
 the files to parse and a grouping factor.}
 
 \item{c_path}{String or numerical index specifying column where paths can be found.}

@@ -10,14 +10,18 @@ run_zs_batch(
   c_split = 2,
   path_out,
   stacker = c("pmax", "dmap"),
-  temp = TRUE,
+  temp,
   path_template = NULL,
-  path_xml = NULL
+  path_xml = NULL,
+  stack = TRUE
 )
 }
 \arguments{
-\item{files}{data.frame containing at least 2 columns containing the paths of
-the files to parse and a grouping factor.}
+\item{files}{A data.frame or character vector. If \code{stack == TRUE},
+a \code{data.frame} should be provided with at least 2 columns containing the paths of
+the files to parse (\code{c_path}) and a grouping factor (\code{c_split}). If
+\code{stack == FALSE}, a character vector should be provided containing paths
+to the stacked files.}
 
 \item{c_path}{String or numerical index specifying column where paths can be found.}
 
@@ -37,6 +41,8 @@ images will be moved into folders by stack.}
 the provided arguments (optional).}
 
 \item{path_xml}{path to write xml file (optional).}
+
+\item{stack}{Logical. Whether to stack the files or not. Defaults to TRUE.}
 }
 \value{
 If \code{return_paths} is TRUE, the function will return a vector of paths to the newly created files.

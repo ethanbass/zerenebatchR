@@ -3,9 +3,12 @@ globalVariables(c("."))
 #' create and run batchscript in zerene stacker
 #' @import xml2
 #' @import magrittr
-#' @importFrom fs dir_delete path_home
-#' @param files data.frame containing at least 2 columns containing the paths of
-#' the files to parse and a grouping factor.
+#' @importFrom fs dir_delete path_home dir_exists
+#' @param files A data.frame or character vector. If \code{stack == TRUE},
+#' a \code{data.frame} should be provided with at least 2 columns containing the paths of
+#' the files to parse (\code{c_path}) and a grouping factor (\code{c_split}). If
+#' \code{stack == FALSE}, a character vector should be provided containing paths
+#' to the stacked files.
 #' @param c_path String or numerical index specifying column where paths can be found.
 #' @param c_split String or numerical index specifying column where factor can
 #' be found for grouping images
@@ -18,6 +21,7 @@ globalVariables(c("."))
 #' @param path_template Path to custom template to be customized according to
 #' the provided arguments (optional).
 #' @param path_xml path to write xml file (optional).
+#' @param stack Logical. Whether to stack the files or not. Defaults to TRUE.
 #' @return If \code{return_paths} is TRUE, the function will return a vector of paths to the newly created files.
 #' If \code{return_paths} is FALSE and \code{export_format} is \code{csv}, the function will return a list
 #' of chromatograms in \code{data.frame} format. Otherwise, it will not return anything.
@@ -32,7 +36,10 @@ run_zs_batch <- function(files, c_path = 1, c_split = 2,
                                path_xml = NULL, stack = TRUE){
   if (stack){
     if (!inherits(files, "data.frame")){
-      stop("If `stack == TRUE`, please supply a `data.frame` to the `files` argument.")
+      stop("If `stack == TRUE`, a `data.frame` should be provided to the `files` argument.")
+    }
+    if (!stack){
+      stop("If `stack == FALSE`, a character vector of stacked files should be provided to the `files` argument.")
     }
     if (nrow(files) == 0){
       stop("Files not found.")
@@ -40,6 +47,18 @@ run_zs_batch <- function(files, c_path = 1, c_split = 2,
   } else{
     if (!inherits(files, "character")){
       stop("If `stack == FALSE`, please supply a character vector to the `files` argument containing the paths to stacked images.")
+    }
+    if (stack){
+      stop("If `stack == TRUE`, a `data.frame` should be provided to the files argument.")
+    }
+    exists <- dir_exists(files)
+    if (!any(exists)){
+      stop("The provided directories do not exist. Please check paths and try again.")
+    }
+    if (!all(exists)){
+      warning(paste("Some of the provided directories do not exist: ",
+                    paste(files[which(!exists)], collapse="\n \t"),
+                    sep = "\n \t"))
     }
   }
 
@@ -130,7 +149,7 @@ run_zs_batch <- function(files, c_path = 1, c_split = 2,
 
 #' stack files in folders
 #' @importFrom fs dir_create file_copy file_move
-#' @param files data.frame containing at least 2 columns containing the paths of
+#' @param df data.frame containing at least 2 columns containing the paths of
 #' the files to parse and a grouping factor.
 #' @param c_path String or numerical index specifying column where paths can be found.
 #' @param c_split String or numerical index specifying column where factor can
