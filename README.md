@@ -7,7 +7,7 @@
 
 ## Overview
 
-zerenebatchR is an R utility for batch processing images in [Zerene Stacker](http://www.zerenesystems.com/cms/stacker). Batch processing in Zerene Stacker requires you to already have the images you want to stack organized into folders by stack. If you have many stacks, this can be onerous. zerenebatchR is intended to facilitate easier batch processing of images using R. (zerenebatchR is not endorsed by the developers of Zerene Stacker).
+zerenebatchR is an R utility for batch processing images in [Zerene Stacker](http://www.zerenesystems.com/cms/stacker). [Batch processing in Zerene Stacker](https://zerenesystems.com/cms/stacker/docs/howtouseit#batch_processing) requires you to already have the images you want to process organized into folders by stack. If you have many stacks, this can be an onerous task. `zerenebatchR` aims to simplify batch processing of images using R. (zerenebatchR is not endorsed by the developers of Zerene Stacker).
 
 
 ## Installation
@@ -27,7 +27,7 @@ install.packages("zerenebatchR", repos="https://ethanbass.r-universe.dev/", type
 
 ## System requirements
 
-zerenebatchR has not yet been tested on Windows and may very well not work without modification due to file path issues.
+zerenebatchR has not yet been tested on Windows and may very well not work on Windows systems without modification due to file path issues.
 
 ## Usage
 
