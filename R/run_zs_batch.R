@@ -1,6 +1,6 @@
 globalVariables(c("."))
 
-#' create and run batchscript in zerene stacker
+#' Create and run batch scripts in Zerene Stacker
 #' @import xml2
 #' @import magrittr
 #' @importFrom fs dir_delete path_home dir_exists

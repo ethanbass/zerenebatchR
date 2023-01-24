@@ -2,7 +2,7 @@
 % Please edit documentation in R/run_zs_batch.R
 \name{run_zs_batch}
 \alias{run_zs_batch}
-\title{create and run batchscript in zerene stacker}
+\title{Create and run batch scripts in Zerene Stacker}
 \usage{
 run_zs_batch(
   files,
@@ -50,7 +50,7 @@ If \code{return_paths} is FALSE and \code{export_format} is \code{csv}, the func
 of chromatograms in \code{data.frame} format. Otherwise, it will not return anything.
 }
 \description{
-create and run batchscript in zerene stacker
+Create and run batch scripts in Zerene Stacker
 }
 \section{Side effects}{
  Chromatograms will be exported in the format specified
