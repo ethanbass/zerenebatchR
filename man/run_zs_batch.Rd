@@ -35,7 +35,8 @@ be found for grouping images}
 \item{temp}{Logical. If TRUE, the function will stack files into a temp
 directory which will be deleted when the operation is completed. Thus,
 the organization of the original image files will be maintained. Otherwise,
-images will be moved into folders by stack.}
+images will be moved permanently into new folders according to the provided
+grouping variable. Defaults to TRUE.}
 
 \item{path_template}{Path to custom template to be customized according to
 the provided arguments (optional).}
@@ -45,16 +46,15 @@ the provided arguments (optional).}
 \item{stack}{Logical. Whether to stack the files or not. Defaults to TRUE.}
 }
 \value{
-If \code{return_paths} is TRUE, the function will return a vector of paths to the newly created files.
-If \code{return_paths} is FALSE and \code{export_format} is \code{csv}, the function will return a list
-of chromatograms in \code{data.frame} format. Otherwise, it will not return anything.
+No return value.
 }
 \description{
 Create and run batch scripts in Zerene Stacker
 }
 \section{Side effects}{
- Chromatograms will be exported in the format specified
-by \code{export_format} in the folder specified by \code{path_out}.
+ Images will be stacked according to the provided grouping
+variable, a Zerene Stacker batch file will be generated, and images will be stacked
+into the folder specified by \code{path_out}.
 }
 
 \author{

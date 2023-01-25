@@ -17,16 +17,16 @@ globalVariables(c("."))
 #' @param temp Logical. If TRUE, the function will stack files into a temp
 #' directory which will be deleted when the operation is completed. Thus,
 #' the organization of the original image files will be maintained. Otherwise,
-#' images will be moved into folders by stack.
+#' images will be moved permanently into new folders according to the provided
+#' grouping variable. Defaults to TRUE.
 #' @param path_template Path to custom template to be customized according to
 #' the provided arguments (optional).
 #' @param path_xml path to write xml file (optional).
 #' @param stack Logical. Whether to stack the files or not. Defaults to TRUE.
-#' @return If \code{return_paths} is TRUE, the function will return a vector of paths to the newly created files.
-#' If \code{return_paths} is FALSE and \code{export_format} is \code{csv}, the function will return a list
-#' of chromatograms in \code{data.frame} format. Otherwise, it will not return anything.
-#' @section Side effects: Chromatograms will be exported in the format specified
-#' by \code{export_format} in the folder specified by \code{path_out}.
+#' @return No return value.
+#' @section Side effects: Images will be stacked according to the provided grouping
+#' variable, a Zerene Stacker batch file will be generated, and images will be stacked
+#' into the folder specified by \code{path_out}.
 #' @author Ethan Bass
 #' @export
 
@@ -157,7 +157,8 @@ run_zs_batch <- function(files, c_path = 1, c_split = 2,
 #' @param temp Logical. If TRUE, the function will stack files into a temp
 #' directory which will be deleted when the operation is completed. Thus,
 #' the organization of the original image files will be maintained. Otherwise,
-#' images will be moved into folders by stack.
+#' images will be moved permanently into new folders according to the provided
+#' grouping variable. Defaults to TRUE.
 #' @author Ethan Bass
 
 stack_files <- function(df, c_path, c_split, temp = TRUE){

@@ -18,7 +18,8 @@ be found for grouping images.}
 \item{temp}{Logical. If TRUE, the function will stack files into a temp
 directory which will be deleted when the operation is completed. Thus,
 the organization of the original image files will be maintained. Otherwise,
-images will be moved into folders by stack.}
+images will be moved permanently into new folders according to the provided
+grouping variable. Defaults to TRUE.}
 }
 \description{
 stack files in folders
