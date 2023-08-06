@@ -2,7 +2,7 @@
 % Please edit documentation in R/run_zs_batch.R
 \name{stack_files}
 \alias{stack_files}
-\title{stack files in folders}
+\title{Stack files in folders}
 \usage{
 stack_files(df, c_path, c_split, temp = TRUE)
 }
@@ -22,7 +22,7 @@ images will be moved permanently into new folders according to the provided
 grouping variable. Defaults to TRUE.}
 }
 \description{
-stack files in folders
+Stack files in folders
 }
 \author{
 Ethan Bass

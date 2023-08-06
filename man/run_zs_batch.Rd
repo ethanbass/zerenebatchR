@@ -26,7 +26,7 @@ to the stacked files.}
 \item{c_path}{String or numerical index specifying column where paths can be found.}
 
 \item{c_split}{String or numerical index specifying column where factor can
-be found for grouping images}
+be found for grouping images.}
 
 \item{path_out}{directory to export converted files.}
 

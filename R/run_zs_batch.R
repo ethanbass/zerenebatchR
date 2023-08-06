@@ -3,7 +3,7 @@ globalVariables(c("."))
 #' Create and run batch scripts in Zerene Stacker
 #' @import xml2
 #' @import magrittr
-#' @importFrom fs dir_delete path_home dir_exists
+#' @importFrom fs dir_delete path_home dir_exists path
 #' @param files A data.frame or character vector. If \code{stack == TRUE},
 #' a \code{data.frame} should be provided with at least 2 columns containing the paths of
 #' the files to parse (\code{c_path}) and a grouping factor (\code{c_split}). If
@@ -11,7 +11,7 @@ globalVariables(c("."))
 #' to the stacked files.
 #' @param c_path String or numerical index specifying column where paths can be found.
 #' @param c_split String or numerical index specifying column where factor can
-#' be found for grouping images
+#' be found for grouping images.
 #' @param path_out directory to export converted files.
 #' @param stacker Which stacking algorithm to use. Either \code{pmax} or \code{dmap}.
 #' @param temp Logical. If TRUE, the function will stack files into a temp
@@ -68,6 +68,16 @@ run_zs_batch <- function(files, c_path = 1, c_split = 2,
     } else{ temp <- FALSE}
   }
 
+  if (!missing(path_out)){
+    dir_exists <- dir.exists(path_out)
+    if (!dir_exists){
+      ans <- readline("Export directory not found. Create directory (y/n)?")
+      if (ans %in% c("y","Y","yes","Yes","YES")){
+        dir.create(path_out)
+      }
+    }
+  }
+
   stacker <- match.arg(stacker, c("pmax", "dmap"))
 
   # get launch command
@@ -84,7 +94,7 @@ run_zs_batch <- function(files, c_path = 1, c_split = 2,
 
   # stack files in temporary folders
   if (stack){
-    stacks <- stack_files(files, c_path, c_split, temp = temp)
+    stacks <- stack_files(df = files, c_path = c_path, c_split = c_split, temp = temp)
   } else{
     stacks <- files
   }
@@ -147,7 +157,7 @@ run_zs_batch <- function(files, c_path = 1, c_split = 2,
   }
 }
 
-#' stack files in folders
+#' Stack files in folders
 #' @importFrom fs dir_create file_copy file_move
 #' @param df data.frame containing at least 2 columns containing the paths of
 #' the files to parse and a grouping factor.
@@ -162,20 +172,28 @@ run_zs_batch <- function(files, c_path = 1, c_split = 2,
 #' @author Ethan Bass
 
 stack_files <- function(df, c_path, c_split, temp = TRUE){
-  sep <- "/"
-  df <- split(as.data.frame(df), df[,c_split])
+  df <- split(as.data.frame(df), df[, c_split])
   file_action <- switch(as.character(temp),
                         "TRUE" = file_copy,
                         "FALSE" = file_move)
-  sapply(df, function(x){
-    path <- x[1, c_path]
-    dirn <- dirname(path)
-    dirn <- ifelse(temp, paste0(dirn, "/temp/"), dirn)
-    dir_path <- paste(dirn, x[,c_split][1], sep = sep)
-    dir_create(dir_path)
-    sapply(x[,c_path], function(file){
-      file_action(file, dir_path)
-    })
-    dir_path
+  paths <- sapply(df, function(x){
+    if (any(fs::file_exists(x[, c_path]))){
+      path <- x[1, c_path]
+      dirn <- dirname(path)
+      dirn <- ifelse(temp, fs::path(dirn,"temp"), dirn)
+      dir_path <- fs::path(dirn, x[, c_split][1])
+      dir_create(dir_path)
+      sapply(x[,c_path], function(file){
+        try(file_action(file, dir_path))
+      })
+      dir_path
+    } else{
+      warning(paste0("Skipping stack ", sQuote(x[1,c_split]), ". Files not found."))
+      NA
+    }
   })
+  if (any(is.na(paths))){
+    paths <- paths[which(!is.na(paths))]
+  }
+  paths
 }
