@@ -1,3 +1,7 @@
+# zerenebatchR 0.2.1
+
+* Added check for duplicated ids in `expand_zs_dataframe`.
+
 # zerenebatchR 0.2.0
 
 * Added option to create export directory if it doesn't exist.

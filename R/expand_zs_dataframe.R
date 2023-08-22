@@ -25,6 +25,12 @@ expand_zs_dataframe <- function(df, c_path, c_id, c_start, c_end,
   if (length(rm) > 0){
     df <- df[-rm,]
   }
+  # check for duplicated IDs
+  duplicated_ids <- duplicated(df[,c_id])
+  if (any(duplicated_ids)){
+    stop(paste0("Some identifiers appear to be duplicated. Please double check IDs and try again.
+         Duplicated IDs: ", sQuote(paste0(df[which(duplicated_ids), c_id])), "."))
+  }
   # check for photos out of order
   wrong_order <- which(!(df[,c_start] < df[,c_end]))
   if (length(wrong_order) > 0){
