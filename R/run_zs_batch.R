@@ -172,7 +172,14 @@ run_zs_batch <- function(files, c_path = 1, c_split = 2,
 #' @author Ethan Bass
 
 stack_files <- function(df, c_path, c_split, temp = TRUE){
-  df <- split(as.data.frame(df), df[, c_split])
+
+  if (length(c_split) > 1){
+    df$id <-apply(df[,c_split], MARGIN = 1, function(x) paste(x, collapse="-"))
+  } else{
+    df$id <- df[,c_split]
+  }
+
+  df <- split(as.data.frame(df), df[, "id"])
   file_action <- switch(as.character(temp),
                         "TRUE" = file_copy,
                         "FALSE" = file_move)
@@ -181,14 +188,14 @@ stack_files <- function(df, c_path, c_split, temp = TRUE){
       path <- x[1, c_path]
       dirn <- dirname(path)
       dirn <- ifelse(temp, fs::path(dirn,"temp"), dirn)
-      dir_path <- fs::path(dirn, x[, c_split][1])
+      dir_path <- fs::path(dirn, x[, "id"][1])
       dir_create(dir_path)
       sapply(x[,c_path], function(file){
         try(file_action(file, dir_path))
       })
       dir_path
     } else{
-      warning(paste0("Skipping stack ", sQuote(x[1,c_split]), ". Files not found."))
+      warning(paste0("Skipping stack ", sQuote(x[1, "id"]), ". Files not found."))
       NA
     }
   })
