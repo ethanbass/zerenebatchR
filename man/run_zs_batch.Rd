@@ -6,8 +6,8 @@
 \usage{
 run_zs_batch(
   files,
-  c_path = 1,
-  c_split = 2,
+  c_split = 1,
+  c_path = 2,
   path_out,
   stacker = c("pmax", "dmap"),
   temp,
@@ -23,10 +23,10 @@ the files to parse (\code{c_path}) and a grouping factor (\code{c_split}). If
 \code{stack == FALSE}, a character vector should be provided containing paths
 to the stacked files.}
 
-\item{c_path}{String or numerical index specifying column where paths can be found.}
-
 \item{c_split}{String or numerical index specifying column where factor can
 be found for grouping images.}
+
+\item{c_path}{String or numerical index specifying column where paths can be found.}
 
 \item{path_out}{directory to export converted files.}
 

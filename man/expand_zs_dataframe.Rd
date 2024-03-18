@@ -4,7 +4,15 @@
 \alias{expand_zs_dataframe}
 \title{Expand data.frame}
 \usage{
-expand_zs_dataframe(df, c_path, c_id, c_start, c_end, extension = "JPG")
+expand_zs_dataframe(
+  df,
+  c_path,
+  c_id,
+  c_start,
+  c_end,
+  extension = "JPG",
+  digits = 4
+)
 }
 \arguments{
 \item{df}{A data.frame containing the first and last photo, file path, and
@@ -25,6 +33,8 @@ the last photo of each stack.}
 \item{extension}{String specifying the file extension of the images. The
 extension must be in the correct case so it matches exactly to the extension
 of the files to be stacked.}
+
+\item{digits}{How many digits should be in the number.}
 }
 \value{
 Expanded data.frame
@@ -32,4 +42,5 @@ Expanded data.frame
 \description{
 This function facilitates stacking photos that are numbered sequentially. It
 must be supplied with a \code{data.frame} with columns containing the
+information about the images to be stacked.
 }

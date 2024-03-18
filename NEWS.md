@@ -1,3 +1,9 @@
+# zerenebatchR 0.2.2
+
+* Allow multiple columns as inputs to `c_id` in `run_zs_batch`.
+* Automatically expand `path_out`, so abbreviated paths don't cause Zerene Stacker to error out.
+* Added `digits` argument to add leading zeros to file numbers in `expand_zs_dataframe`.
+
 # zerenebatchR 0.2.1
 
 * Added check for duplicated ids in `expand_zs_dataframe`.

@@ -30,7 +30,7 @@ globalVariables(c("."))
 #' @author Ethan Bass
 #' @export
 
-run_zs_batch <- function(files, c_path = 1, c_split = 2,
+run_zs_batch <- function(files, c_split = 1, c_path = 2,
                                path_out, stacker = c("pmax", "dmap"),
                                temp, path_template = NULL,
                                path_xml = NULL, stack = TRUE){
@@ -51,7 +51,7 @@ run_zs_batch <- function(files, c_path = 1, c_split = 2,
     if (stack){
       stop("If `stack == TRUE`, a `data.frame` should be provided to the files argument.")
     }
-    exists <- dir_exists(files)
+    exists <- fs::dir_exists(files)
     if (!any(exists)){
       stop("The provided directories do not exist. Please check paths and try again.")
     }
@@ -85,8 +85,8 @@ run_zs_batch <- function(files, c_path = 1, c_split = 2,
   system <- .Platform$OS.type
 
   launch_cmd_path <- switch(system,
-                            "unix" = path_home("Library/Preferences/ZereneStacker/zerenstk.launchcmd"),
-                            "windows" = path_home("AppData\\ZereneStacker\\zerenstk.launchcmd"),
+                            "unix" = fs::path_home("Library/Preferences/ZereneStacker/zerenstk.launchcmd"),
+                            "windows" = fs::path_home("AppData\\ZereneStacker\\zerenstk.launchcmd"),
                             "linux" = "~/.ZereneStacker/zerenstk.launchcmd"
   )
 
@@ -118,13 +118,11 @@ run_zs_batch <- function(files, c_path = 1, c_split = 2,
   l <- x %>% xml_children()  %>% .[[2]] %>% xml_find_all("//Sources") %>% xml_children %>% length
   sources <- x %>% xml_children()  %>% .[[2]] %>% xml_find_all("//Sources")
   xml_attr(sources, "length") <- as.character(l)
-  # x %>% xml_children()  %>% .[[2]] %>% xml_find_all("//Sources")
 
   # set path out
 
   x %>% xml_children()  %>% .[[2]] %>% xml_find_all("//OutputImagesDesignatedFolder") %>%
-    xml_replace(paste0('OutputImagesDesignatedFolder value="', path_out, '"'))
-  # x %>% xml_children %>% .[[4]] %>% xml_add_child(.value=gsub("path_out", path_out, parser))
+    xml_replace(paste0('OutputImagesDesignatedFolder value="', fs::path_expand(path_out), '"'))
 
   # set stacking algorithm
 
@@ -138,7 +136,8 @@ run_zs_batch <- function(files, c_path = 1, c_split = 2,
   # write batch file
 
   if (is.null(path_xml)){
-    path_xml <- paste0(path_out, "batchfile_", strftime(Sys.time(),format = "%Y-%m-%d_%H-%M-%S"), ".xml")
+    path_xml <- paste0(path_out, "batchfile_", strftime(Sys.time(),
+                                                        format = "%Y-%m-%d_%H-%M-%S"), ".xml")
   }
 
   write_xml(x, file = path_xml)
@@ -148,12 +147,11 @@ run_zs_batch <- function(files, c_path = 1, c_split = 2,
   system(paste0(launch_cmd,
                 " -noSplashScreen -runMinimized -exitOnBatchScriptCompletion -batchScript ",
                 path_xml))
-  # , " -sourcePath=", path
 
   # delete temp folders
 
   if (temp){
-    dir_delete(stacks)
+    fs::dir_delete(stacks)
   }
 }
 
@@ -174,22 +172,22 @@ run_zs_batch <- function(files, c_path = 1, c_split = 2,
 stack_files <- function(df, c_path, c_split, temp = TRUE){
 
   if (length(c_split) > 1){
-    df$id <-apply(df[,c_split], MARGIN = 1, function(x) paste(x, collapse="-"))
+    df$id <-apply(df[, c_split], MARGIN = 1, function(x) paste(x, collapse = "-"))
   } else{
-    df$id <- df[,c_split]
+    df$id <- df[, c_split]
   }
 
   df <- split(as.data.frame(df), df[, "id"])
   file_action <- switch(as.character(temp),
-                        "TRUE" = file_copy,
-                        "FALSE" = file_move)
+                        "TRUE" = fs::file_copy,
+                        "FALSE" = fs::file_move)
   paths <- sapply(df, function(x){
     if (any(fs::file_exists(x[, c_path]))){
       path <- x[1, c_path]
       dirn <- dirname(path)
-      dirn <- ifelse(temp, fs::path(dirn,"temp"), dirn)
+      dirn <- ifelse(temp, fs::path(dirn, "temp"), dirn)
       dir_path <- fs::path(dirn, x[, "id"][1])
-      dir_create(dir_path)
+      fs::dir_create(dir_path)
       sapply(x[,c_path], function(file){
         try(file_action(file, dir_path))
       })
