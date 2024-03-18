@@ -7,7 +7,7 @@
 
 ## Overview
 
-zerenebatchR is an R utility for batch processing images in [Zerene Stacker](http://www.zerenesystems.com/cms/stacker). [Batch processing in Zerene Stacker](https://zerenesystems.com/cms/stacker/docs/howtouseit#batch_processing) requires you to already have the images you want to process organized into folders by stack. If you have many stacks, this can be an onerous task. `zerenebatchR` aims to simplify batch processing of images using R. (zerenebatchR is not endorsed by the developers of Zerene Stacker).
+`zerenebatchR` is an R utility for batch processing images in [Zerene Stacker](http://www.zerenesystems.com/cms/stacker). [Batch processing in Zerene Stacker](https://zerenesystems.com/cms/stacker/docs/howtouseit#batch_processing) requires you to already have the images you want to process organized into folders by stack. If you have many stacks, this can be an onerous task. `zerenebatchR` aims to simplify this process by automatically grouping images into folders using information supplied from a spreadsheet and creating the required batch file. **`zerenebatchR` is not created or endorsed by the developers of Zerene Stacker.**
 
 
 ## Installation
@@ -25,10 +25,6 @@ Or install directly from my R Universe repo:
 install.packages("zerenebatchR", repos="https://ethanbass.r-universe.dev/", type="source")
 ```
 
-## System requirements
-
-zerenebatchR has not yet been tested on Windows and may very well not work on Windows systems without modification due to file path issues.
-
 ## Usage
 
-The package contains only one function (`run_zs_batch`) which can be used to create and run batch scripts in Zerene Stacker. zerenebatchR can also create the folders of image stacks required by Zerene Stacker. Please see the documentation for further details, by running `?zerenebatchR::run_zs_batch` from your R console.
+The function `expand_zs_batch` can be used to expand a `data.frame` containing the first and last file in a stack. This expanded `data.frame` can then be fed to the `run_zs_batch` function to stack images in Zerene Stacker. `zerenebatchR` automatically creates the folders of images that are required for batch image processing in Zerene Stacker and creates the batch script. For further details, please see the documentation by running `?zerenebatchR::run_zs_batch` or `?zerenebatchR::expand_zs_batch` from your R console.
