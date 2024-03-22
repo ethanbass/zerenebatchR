@@ -1,3 +1,8 @@
+# zerenebatchR 0.2.3
+
+* Allow unmodified digits in `expand_zs_dataframe` by setting `digits = NULL`.
+* Stop with error if `path_out` isn't specified in `run_zs_batch`.
+
 # zerenebatchR 0.2.2
 
 * Allow multiple columns as inputs to `c_id` in `run_zs_batch`.

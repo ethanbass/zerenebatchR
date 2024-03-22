@@ -1,7 +1,7 @@
 Package: zerenebatchR
 Type: Package
 Title: Utility for Batch Processing in Zerene Stacker
-Version: 0.2.2
+Version: 0.2.3
 Imports: fs,
 	 magrittr,
 	 xml2,

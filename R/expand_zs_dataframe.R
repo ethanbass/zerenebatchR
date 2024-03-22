@@ -49,10 +49,13 @@ expand_zs_dataframe <- function(df, c_path, c_id, c_start, c_end,
                 paste(sQuote(df[wrong_order,"id"]), collapse = ", "), "."))
   }
   extension <- gsub("^\\." ,"", extension)
+  format_num <- ifelse(is.null(digits),
+                       function(x, width, side, pad){x},
+                       stringr::str_pad)
   pp <- lapply(1:nrow(df), function(i){
     data.frame(id = paste(df[i, "id"], collapse = "_"),
                path = paste0(df[i, c_path],
-                             stringr::str_pad(seq(df[i, c_start], df[i, c_end], by = 1),
+                             format_num(seq(df[i, c_start], df[i, c_end], by = 1),
                                               width = digits, side = "left", pad = "0"),
                                                                     ".", extension))
   })

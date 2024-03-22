@@ -34,6 +34,9 @@ run_zs_batch <- function(files, c_split = 1, c_path = 2,
                                path_out, stacker = c("pmax", "dmap"),
                                temp, path_template = NULL,
                                path_xml = NULL, stack = TRUE){
+  if (missing(path_out)){
+    stop("Please specify a path to export the stacked images to `path_out`.")
+  }
   if (stack){
     if (!inherits(files, "data.frame")){
       stop("If `stack == TRUE`, a `data.frame` should be provided to the `files` argument.")
