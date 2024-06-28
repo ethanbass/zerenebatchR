@@ -151,11 +151,12 @@ run_zs_batch <- function(files, c_split = 1, c_path = 2,
                 " -noSplashScreen -runMinimized -exitOnBatchScriptCompletion -batchScript ",
                 path_xml))
 
-  # delete temp folders
-
-  if (temp){
+  # delete temp folders on exit
+  on.exit(
+    if (temp){
     fs::dir_delete(stacks)
-  }
+    }
+  )
 }
 
 #' Stack files in folders
