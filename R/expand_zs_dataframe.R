@@ -14,15 +14,17 @@
 #' the first photo of each stack.
 #' @param c_end String or numerical index specifying the column containing
 #' the last photo of each stack.
+#' @param prefix Image file prefix (preceding image number).
 #' @param extension String specifying the file extension of the images. The
 #' extension must be in the correct case so it matches exactly to the extension
 #' of the files to be stacked.
+#' @param check_dup Check for duplicated grouping variable.
 #' @param digits How many digits should be in the number.
 #' @return Expanded data.frame
 #' @export
 
-expand_zs_dataframe <- function(df, c_path, c_id, c_start, c_end,
-                                extension = "JPG", digits = 4){
+expand_zs_dataframe <- function(df, c_path, c_id, c_start, c_end, prefix="",
+                                extension = "JPG", digits = 4, check_dup = TRUE){
   # check missing lines
   df <- as.data.frame(df)
   df[,c_start] <- as.numeric(df[,c_start])
@@ -36,11 +38,13 @@ expand_zs_dataframe <- function(df, c_path, c_id, c_start, c_end,
   } else{
     df$id <- df[, c_id]
   }
+  if (check_dup & !is.null(c_id)){
   # check for duplicated IDs
-  duplicated_ids <- duplicated(df$id)
-  if (any(duplicated_ids)){
-    stop(paste0("Some identifiers appear to be duplicated. Please double check IDs and try again.
-         Duplicated IDs: ", paste(sQuote(df[which(duplicated_ids), "id"]), collapse = ", "), "."))
+    duplicated_ids <- duplicated(df$id)
+    if (any(duplicated_ids)){
+      stop(paste0("Some identifiers appear to be duplicated. Please double check IDs and try again.
+           Duplicated IDs: ", paste(sQuote(df[which(duplicated_ids), "id"]), collapse = ", "), "."))
+    }
   }
   # check for photos out of order
   wrong_order <- which(!(df[, c_start] < df[, c_end]))
@@ -53,13 +57,22 @@ expand_zs_dataframe <- function(df, c_path, c_id, c_start, c_end,
                        function(x, width, side, pad){x},
                        stringr::str_pad)
   pp <- lapply(1:nrow(df), function(i){
-    data.frame(id = paste(df[i, "id"], collapse = "_"),
-               path = paste0(df[i, c_path],
-                             format_num(seq(df[i, c_start], df[i, c_end], by = 1),
-                                              width = digits, side = "left", pad = "0"),
-                                                                    ".", extension))
+    cbind(df[i,], path = fs::path(df[i, c_path], paste0(prefix,
+                                                    format_num(seq(df[i, c_start], df[i, c_end], by = 1),
+                                                               width = digits, side = "left", pad = "0")),
+                              ext = extension))
+    # data.frame(id = paste(df[i, "id"], collapse = "_"),
+    #            # path = paste0(df[i, c_path],
+    #            #               format_num(seq(df[i, c_start], df[i, c_end], by = 1),
+    #            #                                width = digits, side = "left", pad = "0"),
+    #            #                                                      ".", extension))
+    #            path = fs::path(df[i, c_path], paste0(prefix,
+    #                          format_num(seq(df[i, c_start], df[i, c_end], by = 1),
+    #                                     width = digits, side = "left", pad = "0")),
+    #                          ext = extension))
   })
   pp <- do.call(rbind, pp)
+  pp$image <- as.numeric(fs::path_ext_remove(gsub(prefix,"",basename(pp$path))))
   # check for missing files
   missing_files <- pp[which(!file.exists(pp$path)), "path"]
   if (length(missing_files) > 0){

@@ -10,8 +10,10 @@ expand_zs_dataframe(
   c_id,
   c_start,
   c_end,
+  prefix = "",
   extension = "JPG",
-  digits = 4
+  digits = 4,
+  check_dup = TRUE
 )
 }
 \arguments{
@@ -30,11 +32,15 @@ the first photo of each stack.}
 \item{c_end}{String or numerical index specifying the column containing
 the last photo of each stack.}
 
+\item{prefix}{Image file prefix (preceding image number).}
+
 \item{extension}{String specifying the file extension of the images. The
 extension must be in the correct case so it matches exactly to the extension
 of the files to be stacked.}
 
 \item{digits}{How many digits should be in the number.}
+
+\item{check_dup}{Check for duplicated grouping variable.}
 }
 \value{
 Expanded data.frame

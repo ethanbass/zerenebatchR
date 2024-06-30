@@ -1,3 +1,9 @@
+# zerenebatchR 0.3.0
+
+* Added `identify_stacks` function for automatic detection of stack breakpoints using structural similarity scores.
+* Added new `crop_images` function for cropping images at field of view.
+* Fixed bug causing temp files to remain if function errors out or is canceled.
+
 # zerenebatchR 0.2.3
 
 * Allow unmodified digits in `expand_zs_dataframe` by setting `digits = NULL`.
