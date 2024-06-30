@@ -1,6 +1,6 @@
 Package: zerenebatchR
 Type: Package
-Title: Utility for Batch Processing in Zerene Stacker
+Title: Utilities for Focus Stacking in R
 Version: 0.3.0
 Imports: fs,
 	 magrittr,
@@ -13,7 +13,9 @@ Config/reticulate: list( packages = list(list(package = "opencv-python", pip=TRU
                                     list(package="numpy", pip = TRUE)) )
 Author: Ethan Bass
 Maintainer: Ethan Bass <ethanbass@gmail.com>
-Description: Writes Zerene Stacker batch files and executes them from the commandline.
+Description: Utilities for automation of focus stacking in R. Automatic detection
+    of stack breakpoints using structural similarity, circular cropping, and
+    automatic execution of focus stacking using Zerene Stacker.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
