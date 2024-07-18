@@ -7,22 +7,25 @@
 identify_stacks(
   path,
   cutoff = 0.9,
-  check_lt = 13,
+  check_lt = 8,
   cutoff2 = 0.85,
   interactive = FALSE,
   check_gt = 25,
   ext = "jpg",
+  find_dirs = TRUE,
   verbose = getOption("verbose")
 )
 }
 \arguments{
 \item{path}{Directory containing images.}
 
-\item{cutoff}{Similarity threshold.}
+\item{cutoff}{Similarity threshold. Defaults to \code{0.9}.}
 
-\item{check_lt}{Minimum number of images in stack to trigger secondary check.}
+\item{check_lt}{Number of images to trigger secondary check.
+Defaults to \code{13}.}
 
-\item{cutoff2}{Secondary similarity threshold for secondary check.}
+\item{cutoff2}{Secondary similarity threshold for secondary check.
+Defaults to \code{0.85}.}
 
 \item{interactive}{Boolean. Whether to do interactive checking. Requires
 specification of \code{check_gt}.}
@@ -31,6 +34,8 @@ specification of \code{check_gt}.}
 \code{verbose} is \code{TRUE}.}
 
 \item{ext}{File extension. Defaults to \code{"jpg"}.}
+
+\item{find_dirs}{Whether to look for sub-directories or not. Defaults to TRUE.}
 
 \item{verbose}{Boolean. Whether to print verbose output to console.}
 }

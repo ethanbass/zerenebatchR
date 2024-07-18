@@ -4,7 +4,14 @@
 \alias{stack_files}
 \title{Stack files in folders}
 \usage{
-stack_files(df, c_path, c_split, temp = TRUE)
+stack_files(
+  df,
+  c_path,
+  c_split,
+  temp = TRUE,
+  show_progress = TRUE,
+  verbose = getOption("verbose")
+)
 }
 \arguments{
 \item{df}{data.frame containing at least 2 columns containing the paths of

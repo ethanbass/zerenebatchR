@@ -1,11 +1,15 @@
 #' @noRd
-get_similarities <- function(path, path_out, ext="jpg"){
-  dirs <- list.dirs(path, full.names = TRUE, recursive = FALSE)
+get_similarities <- function(path, find_dirs = FALSE, path_out, ext="jpg"){
+  if (find_dirs){
+    dirs <- list.dirs(path, full.names = TRUE, recursive = FALSE)
+  } else{
+    dirs <- path
+  }
   sim_paths <- fs::path(dirs,"sim.csv")
   exists <- fs::file_exists(sim_paths)
   if (any(!exists)){
     lapply(dirs[!exists], function(d){
-      image_similarity(path_in = d, path_out = fs::path(d, "sim.csv", ext = ext))
+      image_similarity(path_in = d, path_out = fs::path(d, "sim.csv"), ext = ext)
     })
   }
   read_similarities(sim_paths)
@@ -58,15 +62,16 @@ find_breakpoints <- function(x, cutoff = .9,
 #' @param check_gt Maximum number of images to trigger secondary check when
 #' \code{verbose} is \code{TRUE}.
 #' @param ext File extension. Defaults to \code{"jpg"}.
+#' @param find_dirs Whether to look for sub-directories or not. Defaults to TRUE.
 #' @param verbose Boolean. Whether to print verbose output to console.
 #' @export
 identify_stacks <- function(path, cutoff = 0.9, check_lt = 8, cutoff2 = 0.85,
                             interactive = FALSE, check_gt = 25, ext = "jpg",
-                            verbose = getOption("verbose")){
+                            find_dirs = TRUE, verbose = getOption("verbose")){
   if (interactive){
     check_for_pkg("imager")
   }
-  sim <- get_similarities(path, ext = ext)
+  sim <- get_similarities(path, find_dirs = find_dirs, ext = ext)
   if (any(is.na(sim$similarity))){
     sim <- sim[-which(is.na(sim$similarity)),]
   }
@@ -195,3 +200,30 @@ check_for_pkg <- function(pkg, return_boolean = FALSE){
     )
   }
 }
+
+# check_all_stacks <- function(x, max = 25, verbose = getOption("verbose")) {
+#
+#     idx <- which(!duplicated(x$group))[-1]
+#
+#     for (i in idx) {
+#       tryCatch({
+#         img1 <- x$image2[i]
+#         img2 <- x$image2[i-1]
+#
+#         if (verbose) {
+#           message(sprintf("Group %s: %s \U2013 %s", gr, basename(img1), basename(img2)))
+#         }
+#
+#         if (compare_images(image1 = img1, image2 = img2) == "y") {
+#           x <- zs_split_at(x = x, at = img2)
+#         } else {
+#           skip <- c(skip, gr)
+#         }
+#       }, error = function(e) {
+#
+#         warning(sprintf("Error processing group %s: %s", gr, e$message))
+#       }, finally = skip <- c(skip, gr))
+#     }
+#   }
+#   return(x)
+# }
